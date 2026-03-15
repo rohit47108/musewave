@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://musewave.app/schemas/scene-spec.json",
+  "title": "MuseWave SceneSpec",
+  "type": "object",
+  "required": [
+    "version",
+    "title",
+    "description",
+    "moodBlend",
+    "controls",
+    "layers",
+    "visualProfile",
+    "tempo",
+    "key",
+    "scale",
+    "seed",
+    "durationHint"
+  ],
+  "properties": {
+    "version": { "type": "string" },
+    "slug": { "type": ["string", "null"] },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "moodBlend": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["mood", "weight"],
+        "properties": {
+          "mood": {
+            "enum": [
+              "calm",
+              "relaxed",
+              "energetic",
+              "reflective",
+              "mystical",
+              "joyful",
+              "melancholic",
+              "focused"
+            ]
+          },
+          "weight": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "controls": {
+      "type": "object",
+      "required": [
+        "intensity",
+        "filterCutoff",
+        "reverb",
+        "stereoSpread",
+        "visualEnergy",
+        "masterVolume",
+        "tempoJitter"
+      ],
+      "properties": {
+        "intensity": { "type": "number" },
+        "filterCutoff": { "type": "number" },
+        "reverb": { "type": "number" },
+        "stereoSpread": { "type": "number" },
+        "visualEnergy": { "type": "number" },
+        "masterVolume": { "type": "number" },
+        "tempoJitter": { "type": "number" }
+      }
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "role", "enabled", "gain", "pan", "density", "color"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "role": { "enum": ["pad", "pulse", "texture", "sparkle"] },
+          "enabled": { "type": "boolean" },
+          "gain": { "type": "number" },
+          "pan": { "type": "number" },
+          "density": { "type": "number" },
+          "color": { "type": "string" }
+        }
+      }
+    },
+    "visualProfile": {
+      "type": "object",
+      "required": [
+        "palette",
+        "gradient",
+        "particleDensity",
+        "fluidity",
+        "bloom",
+        "noiseScale",
+        "motionBias"
+      ],
+      "properties": {
+        "palette": { "type": "array", "items": { "type": "string" } },
+        "gradient": { "type": "array", "items": { "type": "string" } },
+        "particleDensity": { "type": "number" },
+        "fluidity": { "type": "number" },
+        "bloom": { "type": "number" },
+        "noiseScale": { "type": "number" },
+        "motionBias": { "type": "number" }
+      }
+    },
+    "tempo": { "type": "number" },
+    "key": { "type": "string" },
+    "scale": { "type": "string" },
+    "seed": { "type": "integer" },
+    "durationHint": { "type": "integer" },
+    "createdAt": { "type": ["string", "null"] },
+    "updatedAt": { "type": ["string", "null"] }
+  }
+}

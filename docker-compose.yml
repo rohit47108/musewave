@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: musewave
+      POSTGRES_USER: musewave
+      POSTGRES_PASSWORD: musewave
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    environment:
+      DATABASE_URL: postgresql+psycopg://musewave:musewave@postgres:5432/musewave
+      PUBLIC_BASE_URL: http://localhost:8000
+      FRONTEND_URL: http://localhost:3000
+      EXPORT_STORAGE: local
+      LOCAL_STORAGE_DIR: /app/storage
+    volumes:
+      - ./backend:/app
+      - storage:/app/storage
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+
+  worker:
+    build:
+      context: ./backend
+    command: python -m app.workers.export_worker
+    environment:
+      DATABASE_URL: postgresql+psycopg://musewave:musewave@postgres:5432/musewave
+      PUBLIC_BASE_URL: http://localhost:8000
+      FRONTEND_URL: http://localhost:3000
+      EXPORT_STORAGE: local
+      LOCAL_STORAGE_DIR: /app/storage
+    volumes:
+      - ./backend:/app
+      - storage:/app/storage
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+    command: npm run dev
+    environment:
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  storage:

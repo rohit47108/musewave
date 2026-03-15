@@ -1,0 +1,18 @@
+{
+  "name": "musewave",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:frontend": "npm --prefix frontend run test",
+    "test:e2e": "npm --prefix frontend run test:e2e",
+    "dev:backend": "python -m uvicorn app.main:app --reload --app-dir backend",
+    "worker": "python -m app.workers.export_worker",
+    "test:backend": "pytest backend/tests",
+    "lint:backend": "python -m compileall backend/app"
+  }
+}

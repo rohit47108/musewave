@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "notes": [
+    "MuseWave currently ships with a procedural synthesis engine.",
+    "Drop licensed stems into /public/assets/musewave/stems later without changing the scene contract."
+  ],
+  "groups": [
+    {
+      "mood": "calm",
+      "expectedLayers": ["pad", "texture", "sparkle"]
+    },
+    {
+      "mood": "energetic",
+      "expectedLayers": ["pulse", "sparkle", "texture"]
+    }
+  ]
+}
