@@ -31,6 +31,7 @@ cd backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
+alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
@@ -92,8 +93,9 @@ R2_PUBLIC_BASE_URL=
 
 1. Create a PostgreSQL database.
 2. Deploy the web service from [`render.yaml`](/C:/aBlueCube/render.yaml).
-3. Set shared environment variables from `backend/.env`.
-4. Deploy the worker service from the same `render.yaml`.
+3. Run `alembic upgrade head` before first start and before each schema-changing deploy.
+4. Set shared environment variables from `backend/.env`.
+5. Deploy the worker service from the same `render.yaml`.
 
 ### Cloudflare R2
 
@@ -107,6 +109,7 @@ R2_PUBLIC_BASE_URL=
 - Reduced-motion users get a low-animation visual fallback automatically.
 - The WebGL canvas degrades to a CSS-only hero if the device is low-power or motion-constrained.
 - The audio engine is user-gesture gated to satisfy browser autoplay restrictions.
+- Production schema changes should flow through Alembic migrations; local dev can still use `AUTO_CREATE_TABLES=true`.
 
 ## Notes About Assets
 

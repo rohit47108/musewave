@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     export_storage: Literal["local", "r2"] = "local"
     local_storage_dir: str = "./storage"
     export_poll_seconds: int = 5
+    auto_create_tables: bool = True
     r2_bucket: str | None = None
     r2_region: str = "auto"
     r2_endpoint: str | None = None

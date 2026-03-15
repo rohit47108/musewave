@@ -64,12 +64,7 @@ const ParticleField = ({ scene, metrics }: { scene: SceneSpec; metrics: AudioMet
   return (
     <points ref={ref}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={positions.length / 3}
-          array={positions}
-          itemSize={3}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
         color={scene.visualProfile.palette[0]}

@@ -38,17 +38,28 @@ const pickKey = (blend: MoodBlend[], seed: number) => {
 export const normalizeBlend = (blend: MoodBlend[]): MoodBlend[] => {
   const filtered = blend
     .filter((entry) => entry.weight > 0)
-    .slice(0, 3)
-    .sort((a, b) => MOOD_ORDER.indexOf(a.mood) - MOOD_ORDER.indexOf(b.mood));
+    .sort((a, b) => {
+      if (b.weight !== a.weight) {
+        return b.weight - a.weight;
+      }
+
+      return MOOD_ORDER.indexOf(a.mood) - MOOD_ORDER.indexOf(b.mood);
+    })
+    .slice(0, 3);
 
   if (!filtered.length) {
     return [{ mood: "calm", weight: 1 }];
   }
 
   const total = filtered.reduce((sum, entry) => sum + entry.weight, 0);
-  return filtered.map((entry) => ({
+  const normalized = filtered.map((entry) => Number((entry.weight / total).toFixed(4)));
+  normalized[normalized.length - 1] = Number(
+    (normalized[normalized.length - 1] + (1 - normalized.reduce((sum, value) => sum + value, 0))).toFixed(4)
+  );
+
+  return filtered.map((entry, index) => ({
     ...entry,
-    weight: Number((entry.weight / total).toFixed(4))
+    weight: normalized[index]
   }));
 };
 

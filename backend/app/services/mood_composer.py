@@ -61,7 +61,12 @@ def normalize_blend(blend: list[MoodBlend]) -> list[MoodBlend]:
 
     filtered = sorted(filtered, key=lambda entry: entry.weight, reverse=True)[:3]
     total = sum(entry.weight for entry in filtered) or 1
-    return [MoodBlend(mood=entry.mood, weight=round(entry.weight / total, 4)) for entry in filtered]
+    normalized = [round(entry.weight / total, 4) for entry in filtered]
+    normalized[-1] = round(normalized[-1] + (1 - sum(normalized)), 4)
+    return [
+        MoodBlend(mood=entry.mood, weight=normalized[index])
+        for index, entry in enumerate(filtered)
+    ]
 
 
 def build_visual_profile(blend: list[MoodBlend]) -> VisualProfile:

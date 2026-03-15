@@ -22,7 +22,7 @@ export class MuseWaveToneEngine {
   private limiter?: Tone.Limiter;
   private analyser?: Tone.Analyser;
   private waveform?: Tone.Waveform;
-  private loops: Tone.ToneEvent[] = [];
+  private loops: Array<{ dispose: () => void }> = [];
   private metricsTimer?: number;
   private subscribers = new Set<MetricsCallback>();
   private padSynth?: Tone.PolySynth;

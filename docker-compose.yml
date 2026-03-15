@@ -15,13 +15,14 @@ services:
   api:
     build:
       context: ./backend
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
     environment:
       DATABASE_URL: postgresql+psycopg://musewave:musewave@postgres:5432/musewave
       PUBLIC_BASE_URL: http://localhost:8000
       FRONTEND_URL: http://localhost:3000
       EXPORT_STORAGE: local
       LOCAL_STORAGE_DIR: /app/storage
+      AUTO_CREATE_TABLES: "false"
     volumes:
       - ./backend:/app
       - storage:/app/storage
@@ -40,6 +41,7 @@ services:
       FRONTEND_URL: http://localhost:3000
       EXPORT_STORAGE: local
       LOCAL_STORAGE_DIR: /app/storage
+      AUTO_CREATE_TABLES: "false"
     volumes:
       - ./backend:/app
       - storage:/app/storage

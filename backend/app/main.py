@@ -11,12 +11,14 @@ from app.models.export_job import ExportJobRecord
 from app.models.scene import SceneRecord
 
 settings = get_settings()
+settings.media_root.mkdir(parents=True, exist_ok=True)
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     settings.media_root.mkdir(parents=True, exist_ok=True)
-    Base.metadata.create_all(bind=engine)
+    if settings.auto_create_tables:
+        Base.metadata.create_all(bind=engine)
     yield
 
 

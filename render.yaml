@@ -4,7 +4,7 @@ services:
     env: python
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /v1/health
     plan: starter
     envVars:
@@ -24,6 +24,8 @@ services:
         value: r2
       - key: LOCAL_STORAGE_DIR
         value: ./storage
+      - key: AUTO_CREATE_TABLES
+        value: false
       - key: R2_BUCKET
         sync: false
       - key: R2_REGION
@@ -63,6 +65,8 @@ services:
         value: ./storage
       - key: EXPORT_POLL_SECONDS
         value: 5
+      - key: AUTO_CREATE_TABLES
+        value: false
       - key: R2_BUCKET
         sync: false
       - key: R2_REGION
