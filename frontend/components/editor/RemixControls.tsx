@@ -1,18 +1,15 @@
 "use client";
 
-import { Download, SlidersHorizontal } from "lucide-react";
+import { Link2, SlidersHorizontal } from "lucide-react";
 
-import type { AudioLayerConfig, ExportDuration, SceneControls, SceneSpec } from "@/lib/scene/types";
+import type { AudioLayerConfig, SceneControls, SceneSpec } from "@/lib/scene/types";
 import { cn, formatPercent } from "@/lib/utils";
 
 interface RemixControlsProps {
   scene: SceneSpec;
-  busy?: boolean;
-  exportStatus?: string;
   onControlChange: <K extends keyof SceneControls>(key: K, value: SceneControls[K]) => void;
   onToggleLayer: (id: string) => void;
   onPatchLayer: (id: string, patch: Partial<AudioLayerConfig>) => void;
-  onExport: (duration: ExportDuration) => void;
 }
 
 const controls: Array<{ key: keyof SceneControls; label: string; min: number; max: number; step: number }> = [
@@ -26,12 +23,9 @@ const controls: Array<{ key: keyof SceneControls; label: string; min: number; ma
 
 export const RemixControls = ({
   scene,
-  busy,
-  exportStatus,
   onControlChange,
   onToggleLayer,
-  onPatchLayer,
-  onExport
+  onPatchLayer
 }: RemixControlsProps) => (
   <section className="space-y-5 rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
     <div className="flex flex-wrap items-center justify-between gap-4">
@@ -41,7 +35,7 @@ export const RemixControls = ({
       </div>
       <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-4 py-2 text-sm text-white/65">
         <SlidersHorizontal className="h-4 w-4 text-mint" />
-        {scene.key} {scene.scale} · {scene.tempo} BPM
+        {scene.key} {scene.scale} / {scene.tempo} BPM
       </div>
     </div>
 
@@ -150,28 +144,16 @@ export const RemixControls = ({
     <div className="rounded-[24px] border border-coral/20 bg-coral/8 p-4">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h3 className="font-display text-xl text-white">Offline export</h3>
+          <h3 className="font-display text-xl text-white">Share-first launch</h3>
           <p className="mt-1 text-sm text-white/60">
-            Render a mastered WAV and scene snapshot through the FastAPI export worker.
+            Save a scene to generate a public player page, embed code, and social preview artwork. Download exports can be added later without changing your saved scenes.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {[30, 60, 120].map((duration) => (
-            <button
-              key={duration}
-              type="button"
-              disabled={busy}
-              onClick={() => onExport(duration as ExportDuration)}
-              className="flex items-center gap-2 rounded-full border border-coral/30 bg-black/20 px-4 py-2 text-sm text-white transition hover:border-coral/60 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Download className="h-4 w-4 text-coral" />
-              {duration}s WAV
-            </button>
-          ))}
+        <div className="flex items-center gap-2 rounded-full border border-coral/30 bg-black/20 px-4 py-2 text-sm text-white/80">
+          <Link2 className="h-4 w-4 text-coral" />
+          Share links only
         </div>
       </div>
-
-      {exportStatus ? <p className="mt-3 text-sm text-coral">{exportStatus}</p> : null}
     </div>
   </section>
 );

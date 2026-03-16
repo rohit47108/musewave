@@ -32,7 +32,7 @@ export const Navbar = () => (
 
       <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 md:flex">
         <Sparkles className="h-4 w-4 text-coral" />
-        Live audio + export-ready scenes
+        Live audio + share-ready scenes
       </div>
     </div>
   </header>

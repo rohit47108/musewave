@@ -37,6 +37,10 @@ def create_scene_export(
     payload: ExportRequest,
     database: Session = Depends(get_db)
 ) -> ExportJob:
+    settings = get_settings()
+    if not settings.exports_enabled:
+        raise HTTPException(status_code=503, detail="Exports are disabled for this launch.")
+
     try:
         return enqueue_export(database, slug, payload)
     except ValueError as error:
@@ -45,6 +49,10 @@ def create_scene_export(
 
 @router.get("/exports/{job_id}", response_model=ExportJob)
 def read_export(job_id: str, database: Session = Depends(get_db)) -> ExportJob:
+    settings = get_settings()
+    if not settings.exports_enabled:
+        raise HTTPException(status_code=503, detail="Exports are disabled for this launch.")
+
     job = get_export_job(database, job_id)
     if job is None:
         raise HTTPException(status_code=404, detail="Export not found.")

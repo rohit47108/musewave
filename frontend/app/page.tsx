@@ -11,8 +11,8 @@ const featureCards = [
     body: "Three.js particle clouds, sculptural meshes, and neon gradients respond to analyser energy in real time."
   },
   {
-    title: "Share and export",
-    body: "Generate public player URLs, embeds, OG artwork, and offline WAV exports through the background worker."
+    title: "Share and embed",
+    body: "Generate public player URLs, embeds, and OG artwork so each scene can be reopened and shared instantly."
   }
 ];
 
@@ -55,9 +55,9 @@ export default function HomePage() {
             <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-1">
               <div className="rounded-[30px] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
                 <p className="text-xs uppercase tracking-[0.28em] text-white/40">Core system</p>
-                <p className="mt-3 font-display text-3xl text-white">Hybrid audio + export API</p>
+                <p className="mt-3 font-display text-3xl text-white">Hybrid audio + share API</p>
                 <p className="mt-3 text-sm leading-6 text-white/60">
-                  Tone.js powers instant in-browser iteration while the FastAPI worker renders production-ready offline exports.
+                  Tone.js powers instant in-browser iteration while FastAPI stores canonical scenes for public playback and embeds.
                 </p>
               </div>
               <div className="rounded-[30px] border border-coral/20 bg-coral/10 p-5">
@@ -89,7 +89,7 @@ export default function HomePage() {
               <h2 className="mt-2 font-display text-4xl text-white">From mood intent to public scene</h2>
             </div>
             <p className="max-w-xl text-sm leading-6 text-white/60">
-              The frontend keeps editing immediate. The backend canonicalizes scenes, stores slugs, and turns them into exportable artifacts.
+              The frontend keeps editing immediate. The backend canonicalizes scenes, stores slugs, and turns them into shareable public artifacts.
             </p>
           </div>
 

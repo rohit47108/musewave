@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     public_base_url: str = "http://localhost:8000"
     frontend_url: str = "http://localhost:3000"
     database_url: str = "sqlite:///./musewave.db"
+    exports_enabled: bool = False
     export_storage: Literal["local", "r2"] = "local"
     local_storage_dir: str = "./storage"
     export_poll_seconds: int = 5

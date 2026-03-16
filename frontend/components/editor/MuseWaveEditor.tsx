@@ -7,20 +7,18 @@ import { MoodSelector } from "@/components/editor/MoodSelector";
 import { RemixControls } from "@/components/editor/RemixControls";
 import { ShareModal } from "@/components/editor/ShareModal";
 import { SoundscapeCanvas } from "@/components/editor/SoundscapeCanvas";
-import { createExport, getExportJob, saveScene } from "@/lib/api/client";
+import { saveScene } from "@/lib/api/client";
 import { useAudioEngine } from "@/lib/audio/use-audio-engine";
-import { MOOD_CONFIG } from "@/lib/scene/moods";
-import type { ExportDuration, MoodId } from "@/lib/scene/types";
-import { buildSceneFromBlend, formatMoodBlend } from "@/lib/scene/utils";
 import { usePerformanceTier } from "@/lib/hooks/use-performance-tier";
+import { MOOD_CONFIG } from "@/lib/scene/moods";
+import type { MoodId } from "@/lib/scene/types";
+import { buildSceneFromBlend, formatMoodBlend } from "@/lib/scene/utils";
 import { useMuseWaveStore } from "@/lib/store";
-import { cn } from "@/lib/utils";
 
 export const MuseWaveEditor = () => {
   const scene = useMuseWaveStore((state) => state.scene);
   const metrics = useMuseWaveStore((state) => state.metrics);
   const lastSaved = useMuseWaveStore((state) => state.lastSaved);
-  const currentExport = useMuseWaveStore((state) => state.currentExport);
   const playbackStatus = useMuseWaveStore((state) => state.playbackStatus);
   const setScene = useMuseWaveStore((state) => state.setScene);
   const resetScene = useMuseWaveStore((state) => state.resetScene);
@@ -29,7 +27,6 @@ export const MuseWaveEditor = () => {
   const toggleLayer = useMuseWaveStore((state) => state.toggleLayer);
   const patchLayer = useMuseWaveStore((state) => state.patchLayer);
   const setSaved = useMuseWaveStore((state) => state.setSaved);
-  const setExportJob = useMuseWaveStore((state) => state.setExportJob);
   const { start, toggle, error } = useAudioEngine(scene);
   const { lowPower, reducedMotion } = usePerformanceTier();
   const [previewMood, setPreviewMood] = useState<MoodId | null>(null);
@@ -72,42 +69,6 @@ export const MuseWaveEditor = () => {
     } catch (nextError) {
       setMessage(nextError instanceof Error ? nextError.message : "Unable to save scene.");
       return undefined;
-    } finally {
-      setBusyLabel(undefined);
-    }
-  };
-
-  const handleExport = async (duration: ExportDuration) => {
-    setBusyLabel(`Queueing ${duration}s export...`);
-    setMessage(undefined);
-
-    try {
-      const saved = lastSaved ?? (await handleSave(false));
-
-      if (!saved) {
-        return;
-      }
-
-      const job = await createExport(saved.slug, duration, scene);
-      setExportJob(job);
-      setMessage("Export queued. The worker will publish your WAV shortly.");
-
-      const poll = window.setInterval(async () => {
-        const latest = await getExportJob(job.id);
-        setExportJob(latest);
-
-        if (latest.status === "completed" || latest.status === "failed") {
-          window.clearInterval(poll);
-          setBusyLabel(undefined);
-          setMessage(
-            latest.status === "completed"
-              ? "Export finished. Your WAV is ready for download."
-              : latest.errorMessage ?? "Export failed."
-          );
-        }
-      }, 3000);
-    } catch (nextError) {
-      setMessage(nextError instanceof Error ? nextError.message : "Unable to queue export.");
     } finally {
       setBusyLabel(undefined);
     }
@@ -210,14 +171,14 @@ export const MuseWaveEditor = () => {
             <p className="text-xs uppercase tracking-[0.32em] text-coral/80">Publishing</p>
             <h3 className="mt-3 font-display text-2xl text-white">Share-ready output</h3>
             <p className="mt-3 text-sm leading-6 text-white/60">
-              Every saved composition gets a public URL, embed player, and OG artwork route. Export jobs add downloadable audio.
+              Every saved composition gets a public URL, embed player, and OG artwork route. This launch is focused on sharing and live playback.
             </p>
 
             {lastSaved ? (
               <div className="mt-4 space-y-2 rounded-[22px] border border-white/10 bg-black/20 p-4 text-sm text-white/70">
                 <p className="truncate">Public: {lastSaved.shareUrl}</p>
                 <p className="truncate">Embed: {lastSaved.embedUrl}</p>
-                                <a
+                <a
                   href={lastSaved.shareUrl}
                   target="_blank"
                   rel="noreferrer"
@@ -228,17 +189,11 @@ export const MuseWaveEditor = () => {
               </div>
             ) : null}
 
-            {(busyLabel || message || error || currentExport) ? (
+            {(busyLabel || message || error) ? (
               <div className="mt-4 rounded-[22px] border border-white/10 bg-black/20 p-4 text-sm text-white/70">
                 {busyLabel ? <p className="text-cyan">{busyLabel}</p> : null}
                 {message ? <p className="mt-1">{message}</p> : null}
                 {error ? <p className="mt-1 text-coral">{error}</p> : null}
-                {currentExport ? (
-                  <p className={cn("mt-1", currentExport.status === "completed" ? "text-mint" : "text-white/70")}>
-                    Export {currentExport.status}
-                    {currentExport.audioUrl ? ` / ${currentExport.audioUrl}` : ""}
-                  </p>
-                ) : null}
               </div>
             ) : null}
           </div>
@@ -254,12 +209,9 @@ export const MuseWaveEditor = () => {
         />
         <RemixControls
           scene={scene}
-          busy={Boolean(busyLabel)}
-          exportStatus={currentExport ? `${currentExport.status}${currentExport.audioUrl ? ` / ${currentExport.audioUrl}` : ""}` : undefined}
           onControlChange={setControl}
           onToggleLayer={toggleLayer}
           onPatchLayer={patchLayer}
-          onExport={(duration) => void handleExport(duration)}
         />
       </div>
 
@@ -267,7 +219,3 @@ export const MuseWaveEditor = () => {
     </div>
   );
 };
-
-
-
-
